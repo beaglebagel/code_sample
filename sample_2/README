@@ -1,0 +1,26 @@
+Instruction to run the program: (Python 3.6 required)
+    1. Go to directory where merge.py file is placed.
+    2. Run chmod a+x merge.py
+    3. Run ./merge.py -i {full path to input directory} -o {full path to output file}
+    4. Given that each input files are all sorted(excluding blank lines), will generate merged output file.
+    5. If any of the file contains non lexicographically sorted line, Exception will be thrown.
+
+
+Implementation Detail:
+    - Simple Argparse has been used to gather 2 parameters.
+    - Iterator class(MergeIterator) to simulate Merging Sorted Inputs routine.
+    Iterator takes care of each input file handle opening/closing. Python Context Manager could have been
+    used alternatively to handle clean up and it's a design choice.
+
+
+Complexity Analysis:
+Run: Assuming there are N total input files with average size of K lines..
+    Min Heap's size at one time won't go over N elements, and the program will execute
+    N*K amounts of Heap Push & Pop each taking logN time.
+    Thus, the worst case runtime complexity is O(NKlgN).
+    Total runtime complexity:
+        O(NKlgN - heap operation) +
+        O(N - file gathering & opening/closing) +
+        O(NK - line writing)
+Space: We're reading each files' line one by one and at one time would have read 1 inputs from N files each.
+    So the space complexity is: O(N - heap size)
