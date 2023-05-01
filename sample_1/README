@@ -1,0 +1,41 @@
+Instruction to run the program: (Python 3.6 required)
+    1. Go to directory where fund.py file is placed.
+    2. Run chmod a+x fund.py
+    3. Run ./fund.py -d {full path to input directory}
+
+Follow up questions
+1. 5 hours. Finalizing data model/relationship management was most difficult part overall as it affects overall complexity
+especially around loan assignment part.
+
+2. My initial Covenant implementation doesn't separate maximum default likelihood & banned states.
+I would introduce type abstraction to Covenant class that will provide functional unit of check(pass/fail) logic per covenant type.
+This should allow easier maintenance of various covenants types that might come in the future.
+
+3. New Facilities can be set to be controlled from high level service(Desktop/Web).
+Each facilities shall maintain states like assigned loans, associated covenants.
+CSV of facilities can be uploaded through interface with input valoan_idation.
+
+4. REST - Creating & Assigning loan can roughly use below calls together internally.
+    - Post /loan /facility : create loan, facility.
+    - Get /facilities or /facility/{facility_id}: get all or specific facility info.
+    - Get /loans or /loan/{loan_id}: get all or specific loan info.
+    - Get /covenants or /covenant/{covenant_id}: get all or specific covenant info.
+    - Get /banks or /{bank_id}: get all or specific bank info.
+    - Put /loan/{loan_id} /facility/{facility_id} : update specific loan or facility.
+    - Put /facility/{facility_id}/loan/{loan_id} : assign a loan to facility.
+    - Delete /facility/{facility_id}/loan/{loan_id} : unassign a loan from facility.
+
+5. Other heuristics that could be combination of..
+    - Combining size(higher the better) & interest(lower the better) rate factor to find fulfilling facility.
+
+6. Complexity Analysis
+ - Load Facility(N): Run: O(N), Space: O(N)
+ - Load Covenant(N): Run: O(N), Space: O(N)
+ - Load Loan(N): Run: O(N), Space: O(N)
+ - Process Covenant(N): Run: O(N), Space: O(N)
+ - Heapify Facility(N): Run: O(N)
+ - Process Loan(N), Facility(F)
+    - Find Facility:
+        - Run: O(FlgF) as worst case as each loan can potentailly exhauste entire heap not finding any matches.
+    - Overall Run: O(NFlgF), Space: O(N) + O(F)
+ - Write(N): Run: O(N)
