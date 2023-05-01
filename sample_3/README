@@ -1,0 +1,58 @@
+Instruction to run the program: (Python 3.6 required)
+    1. Go to directory where wikipedia_pageview.py file is located.
+    2. Run chmod a+x wikipedia_pageview.py
+    3. Run ./wikipedia_pageview.py -d {full path to input directory}
+    4. E.g> ./wikipedia_pageview.py -s -d path_to_output_dir -o
+            ./wikipedia_pageview.py -s 20190514/12 -e 20190514/15 -n 3 -d path_to_output_dir
+    5. Due to the limit of 3 for concurrent wikidump file access,
+        -n > 3 will generate (HTTP Error 503: Service Temporarily Unavailable).
+        Please use -n up to 3 for this demonstration.
+
+Implementation Detail:
+    - Simple Argparse for input parameter processing + validation.
+    - Load external blacklist page.
+    - Ranker takes in date ranges and spawns multi processors to handle each date/hour points in parallel.
+    - Each child process takes date point input and follows parse, rank and write in sequence.
+    - Parse: buffered gzip url parser constructs data points.
+    - Rank: use custom comparator to sort (page, count) in decreasing order of count then increasing order of pages.
+    - Write: simple writer of (domain, [page,count]) output.
+
+Assumptions:
+    - blacklist file had lines that with only 'domain'(not pages). The program ignores this line from blacklist.
+    - output file name was named yyyyMMdd-HH00000 format.
+    - output file format is as: domain
+                                    count, page
+    - domain code wasn't translated back to full domain name.
+    - many parameters were left flexible enough to be configured differently.
+    - assumed there was no limit of 3 to concurrent remote file access.
+
+Follow up questions
+1. What additional things would you want to operate this application in a production setting?
+    - Would consider using module such as Python pandas that provides concise functionality in data loading + aggregating/sorting.
+    For this exercise, only tried to use plain python for demonstrable purposes.
+    - Include more backup plans upon accessing external resource availability such as s3 blacklist.
+    - Include process recovery/retry logic for child processes that fails.
+    - Better individual process level & error logging to easier track.
+    - Limit on # of spawnable child processes based on production machine load/profile.
+    - Access control around output file location to ensure exactly one process output.
+    (just in case ranker is called from multiple parent process).
+
+2. What might change about your solution if this application needed to run automatically for each hour of the day?
+    - The script itself can include periodic monitor to trigger the ranker process on each hour point.
+    - Alternatively, the ranker routine can be exposed as a service to be called from external scheduler.
+    - Also, the script itself can be scheduled to be triggered by external scheduler.
+    - Each batch of job can safely include up to certain past hours that are already processed as
+    it auto skips already calculated date points, and possibly to cover recently missed date points.
+
+3. How would you test this application?
+    - Unit test of each ranker function.
+    - Individual output to output testing using external module like pandas to verify that full output is correct.
+    - Load testing including overlapping date points to ensure files are skipped or overrode accordingly.
+    - Performance testing of individual function(especially around parse, rank) and finding optimal # of processors
+    to utilize with certain date ranges. There might be limit to # of concurrent remote file access(3).
+
+4. How you’d improve on this application design?
+    - Parallel processing per date points are ideal logic unit to start.
+    - During ranking, enhance ranking logic to possibly parallelize further on page count per domain.
+    - Since there is limit of 3 request of concurrent file access, we can think of separating parser processes from
+    rank & writing processes. This might open up more parallelism.
