@@ -33,11 +33,12 @@ class Covenant:
         return True
 
     def __repr__(self):
-        return 'Covenant [bank_id:{}, facility_id:{}, maximum_default_likelihood:{}, banned_states:{}]'.format(
-            self.bank_id,
-            self.facility_id,
-            self.maximum_default_likelihood,
-            self.banned_state
+        return (
+                f'Covenant '
+                f'[bank_id:{self.bank_id}, '
+                f'facility_id:{self.facility_id}, '
+                f'maximum_default_likelihood:{self.maximum_default_likelihood}, '
+                f'banned_states:{self.banned_state}]'
         )
 
     @staticmethod

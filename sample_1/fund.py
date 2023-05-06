@@ -27,7 +27,7 @@ def write(file_dir, file_name, header, data_list):
         fh.write(header + '\n')
         for data in data_list:
             fh.write('{}\n'.format(','.join(data)))
-    print('Wrote: {}'.format(path))
+    print(f'Wrote: {path}')
 
 
 def find_facility(loan, facilities, covenant_map):
@@ -131,7 +131,7 @@ def prompt():
 if __name__ == '__main__':
 
     file_dir = prompt()
-    print('Reading files from {}'.format(file_dir))
+    print(f'Reading files from {file_dir}')
 
     # Collect input files.
     file_dict = get_files(input_dir=file_dir)

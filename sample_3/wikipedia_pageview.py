@@ -30,7 +30,7 @@ def timing(f):
         start = timer()
         result = f(*args, **kw)
         end = timer()
-        print('func:{} took: {:.2f} sec'.format(f.__name__, end-start))
+        print(f'func:{f.__name__} took: {end-start:.2f} sec')
         return result
     return wrap
 
@@ -81,7 +81,7 @@ class Ranker:
 
             # if override is not set and output_file exists, just return.
             if not override and os.path.exists(full_path):
-                print('File {} already exists! Skipping..'.format(full_path))
+                print(f'File {full_path} already exists! Skipping..')
                 continue
 
             # prepare full file url
@@ -133,7 +133,7 @@ class Ranker:
         blacklist = blacklist or self.blacklist
         domain_page_counter = defaultdict(dict)
 
-        print('Process[{}] Reading: {}'.format(os.getpid(), url))
+        print(f'Process[{os.getpid()}] Reading: {url}')
         response = urllib.request.urlopen(url)
         with gzip.GzipFile(fileobj=response) as pageview:
             with io.BufferedReader(pageview) as buffer:
@@ -162,7 +162,7 @@ class Ranker:
         ranked = {}
         top = top or self.top
 
-        print('Process[{}] Ranking..'.format(os.getpid()))
+        print(f'Process[{os.getpid()}] Ranking..')
         # rank & sort top pages per domain.
         for domain, page_counter in domain_page_counter.items():
             # print('processing: {}'.format(domain))
@@ -185,7 +185,7 @@ class Ranker:
         '''
 
         try:
-            print('Process[{}] Writing: {}'.format(os.getpid(), output_file))
+            print(f'Process[{os.getpid()}] Writing: {output_file}')
 
             # create dir if doesn't exists.
             os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -196,9 +196,9 @@ class Ranker:
                     of.write('{}\n'.format(domain))
                     for count, page in ranked[domain]:
                         of.write('\tcount:{} page:{}\n'.format(page, count))
-            print('Process[{}] Finished writing..'.format(os.getpid()))
+            print(f'Process[{os.getpid()}] Finished writing..')
         except Exception as e:
-            print('Failed writing {}! Error:{}'.format(output_file, e))
+            print(f'Failed writing {output_file}! Error:{e}')
 
     def process(self, start_date, end_date):
         '''
@@ -207,9 +207,11 @@ class Ranker:
         :param start_date, datetime
         :param end_date, datetime
         '''
-        print('Processing {} - {} top:[{}] override:[{}] nprocessors:[{}] output_dir:[{}]'.format(
-            start_date, end_date, self.top, self.override, self.nprocessors, self.output_dir
-        ))
+        print(f'Processing {start_date} - {end_date} '
+              f'top:[{self.top}] '
+              f'override:[{self.override}] '
+              f'nprocessors:[{self.nprocessors}] '
+              f'output_dir:[{self.output_dir}]')
 
         # shared work queue
         input_queue = multiprocessing.Queue()
@@ -272,7 +274,7 @@ def read_blacklist():
                     continue
                 blacklist_dict[parts[0].decode()].add(parts[1].decode())
     except Exception as e:
-        print('Error while reading s3 black list link: {}. \nIgnoring to use blacklist.'.format(e))
+        print(f'Error while reading s3 black list link: {e}. \nIgnoring to use blacklist.')
         blacklist_dict = defaultdict(set)
 
     return blacklist_dict

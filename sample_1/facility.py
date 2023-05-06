@@ -30,8 +30,14 @@ class Facility:
         return round(combined_yield)
 
     def __repr__(self):
-        return 'Facility [id:{}, bank_id:{}, interest_rate:{}, amount: {}, covenant: {}, loan: {}]'.format(
-            self.id, self.bank_id, self.interest_rate, self.amount, self.covenant, self.loans
+        return (
+            f'Facility '
+            f'[id:{self.id}, '
+            f'bank_id:{self.bank_id}, '
+            f'interest_rate:{self.interest_rate}, '
+            f'amount: {self.amount}, '
+            f'covenant: {self.covenant}, '
+            f'loan: {self.loans}]'
         )
 
     def __lt__(self, other):

@@ -23,8 +23,12 @@ class Loan:
         self.facility_id = None
 
     def __repr__(self):
-        return 'Loan [id:{}, interest_rate:{}, default_likelihood:{}, amount:{}, state:{}]'.format(
-            self.id, self.interest_rate, self.default_likelihood, self.amount, self.state
+        return (
+                f'Loan [id:{self.id}, '
+                f'interest_rate:{self.interest_rate}, '
+                f'default_likelihood:{self.default_likelihood}, '
+                f'amount:{self.amount}, '
+                f'state:{self.state}]'
         )
 
     @staticmethod
