@@ -16,7 +16,7 @@ class MergeIterator:
         self.last_read = {}
 
         for i, file in enumerate(self.files):
-            print('Iterator opening file[{}]: {}'.format(i, file))
+            print(f'Iterator opening file[{i}]: {file}')
             self.file_handles[i] = open(file, 'r')
             self.last_read[i] = ''
 
@@ -26,7 +26,7 @@ class MergeIterator:
                 line = fh.readline().strip()
                 if not line:
                     continue
-                print('Adding first line of file[{}]: {}'.format(i, line))
+                print(f'Adding first line of file[i]: {line}')
                 self.heap.append((line, i))
                 break
 
@@ -36,7 +36,7 @@ class MergeIterator:
     def __iter__(self):
         return self
 
-    def next(self):
+    def next(self) -> str:
         if not self.heap:
             raise StopIteration('End of Iterator reached!')
 
@@ -45,8 +45,7 @@ class MergeIterator:
 
         # check if we received unsorted input file excluding whitespace.
         if self.last_read[i] > line:
-            raise ValueError('Input File not sorted! index:{} [{}] followed by [{}]'
-                             .format(i, self.last_read[i], line))
+            raise ValueError(f'Input File not sorted! index:{i} [{self.last_read[i]}] followed by [{line}]')
 
         # get appropriate file handle.
         fh = self.file_handles[i]
@@ -76,7 +75,7 @@ class MergeIterator:
         return line
 
 
-def write(output_file, merge_iterator):
+def write(output_file, merge_iterator) -> None:
     '''
     Generates full output path with items from merge iterator.
     @Note: Skip the duplicate outputs by itself.
@@ -101,10 +100,10 @@ def write(output_file, merge_iterator):
     except Exception as e:
         print(e)
 
-    print('Generated {}'.format(output_file))
+    print(f'Generated {output_file}')
 
 
-def get_files(input_dir):
+def get_files(input_dir) -> list:
     '''
     Basic input file list gatherer.
     '''
@@ -135,10 +134,10 @@ def prompt():
 
 if __name__ == '__main__':
     input_dir, output_file = prompt()
-    print('Read input_dir {}, output_file {}'.format(input_dir, output_file))
+    print(f'Read input_dir {input_dir}, output_file {output_file}')
     # Gather files.
     files = get_files(input_dir)
-    print('Processing {}'.format(files))
+    print(f'Processing {files}')
     # make Merge Iterator.
     mi = MergeIterator(files)
     # write merged file.
