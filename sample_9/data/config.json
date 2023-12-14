@@ -1,0 +1,24 @@
+{
+  "symbols": {
+    "TSLA": {
+      "currency": "USD"
+    },
+    "BMW": {
+      "currency": "EUR"
+    },
+    "AZN": {
+      "currency": "GBP"
+    },
+    "GBP": {
+      "currency": "USD"
+    },
+    "EUR": {
+      "currency": "USD"
+    }
+  },
+  "users": {
+    "a": ["TSLA", "AZN", "USD", "GBP"],
+    "b": ["MSFT", "TSLA", "USD", "GBP"],
+    "c": ["AZN", "TSLA", "USD", "EUR", "GBP"]
+  }
+}
