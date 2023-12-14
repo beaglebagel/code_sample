@@ -1,0 +1,6 @@
+Django==4.2.0
+djangorestframework>=3.11,<4.0
+psycopg2>=2.8
+celery>=4.4,<5.0
+redis>=3.4,<4.0
+flower==0.9.5

@@ -1,0 +1,65 @@
+version: '3'
+services:
+    # Django web server
+    web:
+        image: casestudy:local
+        build:
+            context: .
+            dockerfile: Dockerfile
+        hostname: web
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+            - rabbitmq
+            - redis
+
+    # Celery worker
+    celery:
+        image: casestudy:local
+        command: celery --app=casestudy.celery worker -c 10 -E -Q celery --loglevel=INFO --max-tasks-per-child=25 --without-gossip --without-mingle --without-heartbeat --purge
+        volumes:
+            - .:/app
+        depends_on:
+            - db
+            - rabbitmq
+            - redis
+    flower:
+        image: casestudy:local
+        command: celery flower --app=casestudy.celery --broker=amqp://guest:guest@rabbitmq:5672 --broker-api=http://guest:guest@rabbitmq:15672/api//
+        ports:
+          - "5555:5555"
+        depends_on:
+          - rabbitmq
+    # Postgres
+    db:
+      image: postgres:15
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_DB=postgres
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+
+    # Redis
+    redis:
+        image: redis:3.2.10
+        hostname: redis
+        ports:
+          - "6379:6379"
+
+    # RabbitMQ
+    rabbitmq:
+      image: rabbitmq:3-management-alpine
+      container_name: 'rabbitmq'
+      ports:
+        - "5672:5672"
+        - "15672:15672"
+      depends_on:
+        - redis
+
+volumes:
+    postgres_data:
