@@ -1,0 +1,9 @@
+- step: "create user 1"
+  dependencies: [ "prepare database" ]
+  precedence: 100
+- step: "create user 2"
+  dependencies: [ "prepare database" ]
+  precedence: 50
+- step: "prepare database"
+  dependencies: [ ]
+  precedence: 10

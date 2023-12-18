@@ -1,0 +1,3 @@
+prepare database
+create user 1
+create user 2
