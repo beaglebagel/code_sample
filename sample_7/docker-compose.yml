@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  web:
+    container_name: ld
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./app:/ld/app
+    ports:
+      - "8000:8000"
